@@ -6,7 +6,7 @@
 /*   By: arnaud <arnaud@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/29 22:41:28 by arnaud            #+#    #+#             */
-/*   Updated: 2023/12/20 18:27:50 by arnaud           ###   ########.fr       */
+/*   Updated: 2024/01/05 22:08:52 by arnaud           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void				*ft_memset(void *s, int c, size_t n);
 void				ft_putchar_fd(char c, int fd);
 void				ft_putendl_fd(char *s, int fd);
 void				ft_putnbr_fd(int nb, int fd);
-void				ft_putstr_fd(char const *s, int fd);
+int				ft_putstr_fd(char const *s, int fd);
 void				ft_striteri(char *s, void (*f)(unsigned int, char *));
 char				**ft_split(const char *s, char c);
 
