@@ -6,7 +6,7 @@
 /*   By: arnaud <arnaud@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 21:44:53 by arnaud            #+#    #+#             */
-/*   Updated: 2024/01/05 22:42:43 by arnaud           ###   ########.fr       */
+/*   Updated: 2024/01/07 16:35:56 by arnaud           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,6 @@ typedef struct s_pipex
 	int		cmdc;
 	int		fd_input;
 	int		fd_output;
-} t_pipex
+}			t_pipex;
 
 #endif
