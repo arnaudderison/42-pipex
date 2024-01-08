@@ -1,32 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_free_matrice.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arnaud <arnaud@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/02 20:05:22 by arnaud            #+#    #+#             */
-/*   Updated: 2024/01/08 13:42:19 by arnaud           ###   ########.fr       */
+/*   Created: 2024/01/08 21:08:04 by arnaud            #+#    #+#             */
+/*   Updated: 2024/01/08 21:09:56 by arnaud           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/pipex.h"
+#include "libft.h"
 
-int	main(int argc, char **argv, char **env)
+void	ft_free_matrice(unsigned int count, ...)
 {
-	t_pipex	pipex;
-	char	*tmp;
+	va_list	args;
+	void	***tab;
+	int		i;
 
-	if (argc < 5 || !argv)
-		return (ft_putstr_fd(RED NB_ARGS_ERR RESET, 2));
-	if (!env)
-		return (ft_putstr_fd(RED NO_ENV_ERR RESET, 2));
-	init(&pipex, argv, env, argc);
-	tmp = *env;
-	while (tmp)
+	va_start(args, count);
+	while (count--)
 	{
-		ft_printf("%s\n", tmp);
-		tmp = *env++;
+		tab = va_arg(args, void ***);
+		if (*tab)
+		{
+			i = 0;
+			while ((*tab)[i])
+			{
+				free((*tab)[i]);
+				(*tab)[i++] = NULL;
+			}
+			free(*tab);
+			*tab = NULL;
+		}
 	}
-	return (1);
+	va_end(args);
 }

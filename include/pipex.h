@@ -6,7 +6,7 @@
 /*   By: arnaud <arnaud@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 21:44:53 by arnaud            #+#    #+#             */
-/*   Updated: 2024/01/07 20:28:51 by arnaud           ###   ########.fr       */
+/*   Updated: 2024/01/08 22:29:02 by arnaud           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "ft_printf.h"
 # include "libft.h"
+# include <errno.h>
 # include <fcntl.h>
 # include <stdio.h>
 # include <sys/wait.h>
@@ -30,6 +31,7 @@
 # define NULL_PTR "NULL Pointer ERROR...\n"
 # define NB_ARGS_ERR "Number(s) of args is invalide\n"
 # define NO_ENV_ERR "Undetected environment variable\n"
+# define NFCMD "Commande not found ..."
 
 typedef struct s_pipex
 {
@@ -42,6 +44,8 @@ typedef struct s_pipex
 
 void		init(t_pipex *pipex, char **argv, char **env, int argc);
 void		exit_pipex(t_pipex *pipex, char *msg);
-char		**cleantab(char **tab, int size);
+char		***cleantab(char **tab, int size);
+char		**create_cmds(char ***s_cmds, int size, char **env);
+char		*find_path(char *cmd, char **env);
 
 #endif
