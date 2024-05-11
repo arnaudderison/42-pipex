@@ -3,41 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arnaud <arnaud@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aderison <aderison@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/02 20:05:22 by arnaud            #+#    #+#             */
-/*   Updated: 2024/01/09 00:32:13 by arnaud           ###   ########.fr       */
+/*   Created: 2024/05/09 16:06:55 by aderison          #+#    #+#             */
+/*   Updated: 2024/05/11 21:59:21 by aderison         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/pipex.h"
+#include "pipex.h"
 
-static void	close_pipes(int fds[], int cmdc)
+static void	init_null(t_pipex *pipex)
 {
-	int	i;
-
-	i = 0;
-	while (i < 2 * (cmdc - 1))
-	{
-		close(fds[i]);
-		i++;
-	}
+	pipex->cmds = NULL;
+	pipex->path = NULL;
 }
 
-static void	create_pipes(int fds[], t_pipex pipex)
-{
-	int	i;
-
-	i = 0;
-	while (i < pipex.cmdc - 1)
-	{
-		if (pipe(fds + i * 2) < 0)
-			exit_pipex(&pipex, "pipe error");
-		i++;
-	}
-}
-
-static void	execute_command(t_pipex pipex, int fds[], int i, char **env)
+static void	execute_command(t_pipex pipex, int fds[], int i)
 {
 	int	j;
 
@@ -49,39 +30,35 @@ static void	execute_command(t_pipex pipex, int fds[], int i, char **env)
 		dup2(pipex.fd_output, 1);
 	else
 		dup2(fds[i * 2 + 1], 1);
-	j = 0;
-	while (j < 2 * (pipex.cmdc - 1))
-	{
+	j = -1;
+	while (++j < 2 * (pipex.cmdc - 1))
 		close(fds[j]);
-		j++;
-	}
-	if (execve(pipex.cmds[i], pipex.s_cmds[i], env) == -1)
+	if (execve(pipex.cmds[i][0], pipex.cmds[i], pipex.path) == -1)
 	{
-		perror(pipex.cmds[i]);
-		exit_pipex(&pipex, "Error cve");
+		ft_printf(MAG "pepex:" RESET " %s: ", strerror(errno));
+		exit_pipex(&pipex, "null", EXIT_FAILURE);
 	}
 }
 
-static void	process(t_pipex pipex, char **env)
+static void	precess(t_pipex *pipex)
 {
-	int		fds[2 * (pipex.cmdc - 1)];
-	int		i;
+	int		fds[2 * (pipex->cmdc - 1)];
 	pid_t	pid;
+	int		i;
 
-	create_pipes(fds, pipex);
-	i = 0;
-	while (i < pipex.cmdc)
+	ft_create_pipes(fds, pipex->cmdc);
+	i = -1;
+	while (++i < pipex->cmdc)
 	{
 		pid = fork();
+		if (pid < 0)
+			exit_pipex(pipex, RED "Fork error (pid < 0)" RESET, EXIT_FAILURE);
 		if (pid == 0)
-			execute_command(pipex, fds, i, env);
-		else if (pid < 0)
-			exit_pipex(&pipex, "Fork error");
-		i++;
+			execute_command(*pipex, fds, i);
 	}
-	close_pipes(fds, pipex.cmdc);
+	ft_close_pipes(fds, pipex->cmdc);
 	i = -1;
-	while (++i < pipex.cmdc)
+	while (++i < pipex->cmdc)
 		wait(NULL);
 }
 
@@ -89,13 +66,18 @@ int	main(int argc, char **argv, char **env)
 {
 	t_pipex	pipex;
 
-	if (argc < 5 || !argv)
+	if (argc < 5 || !argv || !*argv)
 		return (ft_putstr_fd(RED NB_ARGS_ERR RESET, 2));
-	if (!env)
-		return (ft_putstr_fd(RED NO_ENV_ERR RESET, 2));
-	init(&pipex, argv, env, argc);
-	process(pipex, env);
-	close(pipex.fd_input);
-	close(pipex.fd_output);
-	return (1);
+	if (!env || !(*env))
+		return (ft_putstr_fd(RED ENV_ERR RESET, 2));
+	init_null(&pipex);
+	pipex.path = path_exist(env);
+	if (!pipex.path || !(*pipex.path))
+		return (ft_putstr_fd(RED ENV_ERR RESET, 2));
+	init_struct(&pipex, argv[1], argv[argc - 1], argv + 2, argc);
+	precess(&pipex);
+	exit_pipex(&pipex,
+		GREEN "\nPipex Terminé avec succès. \nBy Arnaud Derison (aderison)" RESET,
+		EXIT_SUCCESS);
+	return (0);
 }

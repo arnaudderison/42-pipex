@@ -3,22 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arnaud <arnaud@student.42.fr>              +#+  +:+       +#+        */
+/*   By: aderison <aderison@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/05 21:44:53 by arnaud            #+#    #+#             */
-/*   Updated: 2024/01/08 22:29:02 by arnaud           ###   ########.fr       */
+/*   Created: 2024/05/09 19:06:55 by aderison          #+#    #+#             */
+/*   Updated: 2024/05/11 01:29:12 by aderison         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PIPEX_H
 # define PIPEX_H
 
-# include "ft_printf.h"
 # include "libft.h"
 # include <errno.h>
 # include <fcntl.h>
 # include <stdio.h>
-# include <sys/wait.h>
+# include <string.h>
 
 # define RED "\x1B[31m"
 # define GREEN "\x1B[32m"
@@ -28,24 +27,24 @@
 # define CYN "\x1B[36m"
 # define RESET "\x1B[0m"
 
-# define NULL_PTR "NULL Pointer ERROR...\n"
-# define NB_ARGS_ERR "Number(s) of args is invalide\n"
-# define NO_ENV_ERR "Undetected environment variable\n"
-# define NFCMD "Commande not found ..."
-
 typedef struct s_pipex
 {
-	char	**cmds;
-	char	***s_cmds;
+	char	**path;
+	char	***cmds;
 	int		cmdc;
 	int		fd_input;
 	int		fd_output;
 }			t_pipex;
 
-void		init(t_pipex *pipex, char **argv, char **env, int argc);
-void		exit_pipex(t_pipex *pipex, char *msg);
-char		***cleantab(char **tab, int size);
-char		**create_cmds(char ***s_cmds, int size, char **env);
-char		*find_path(char *cmd, char **env);
+# define NB_ARGS_ERR "Number(s) of args is invalide\n"
+# define ENV_ERR \
+	"Invalid ENV\n [+] Check if the PATH environment variable is \
+available by typing env in your terminal"
+# define ERR_POINTER_NULL "POINTER NULL ERROR : \n"
+
+char		**path_exist(char **env);
+int			init_struct(t_pipex *pipex, char *input, char *output, char **cmds,
+				int argc);
+void		exit_pipex(t_pipex *pipex, char *msg, int error);
 
 #endif
