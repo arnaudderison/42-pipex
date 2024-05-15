@@ -6,16 +6,21 @@
 /*   By: aderison <aderison@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/29 22:41:28 by arnaud            #+#    #+#             */
-/*   Updated: 2024/05/10 20:19:19 by aderison         ###   ########.fr       */
+/*   Updated: 2024/05/12 13:26:49 by aderison         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
 
+# include <limits.h>
 # include <stdarg.h>
 # include <stdlib.h>
 # include <unistd.h>
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 5
+# endif
 
 typedef struct s_list
 {
@@ -81,5 +86,6 @@ int					ft_u_putnbr_fd(unsigned int nb, int fd);
 int					ft_pointer(size_t addr);
 void				ft_close_pipes(int *fds, int count);
 int					ft_create_pipes(int fds[], int count);
+char				*get_next_line(int fd);
 
 #endif

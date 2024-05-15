@@ -6,7 +6,7 @@
 /*   By: aderison <aderison@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 16:06:55 by aderison          #+#    #+#             */
-/*   Updated: 2024/05/11 23:34:01 by aderison         ###   ########.fr       */
+/*   Updated: 2024/05/14 15:15:34 by aderison         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,34 @@ static void	precess(t_pipex *pipex)
 		wait(NULL);
 }
 
+static void	heredoc(t_pipex *pipex, char *limiter, char *output, char **cmds)
+{
+	char	*line;
+	int		fd;
+
+	fd = open(HEREDOC_FILE, O_WRONLY | O_CREAT, 0644);
+	if (fd < 0)
+		exit_pipex(pipex, RED HEREDOC_FILE RESET, EXIT_FAILURE);
+	line = NULL;
+	while (ft_strncmp(line, limiter, ft_strlen(limiter)) != 0 || line == NULL)
+	{
+		ft_free(1, &line);
+		ft_printf(" >");
+		line = get_next_line(0);
+		write(fd, line, ft_strlen(line));
+	}
+	ft_free(1, &line);
+	prepare(pipex, HEREDOC_FILE, output, cmds);
+	precess(pipex);
+	unlink(HEREDOC_FILE);
+	exit_pipex(pipex, GREEN SUCCESS_MESSAGE RESET, 0);
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	t_pipex	pipex;
 
-	if (argc != 5 || !argv || !*argv)
+	if (argc < 5 || !argv || !*argv)
 		return (ft_putstr_fd(RED NB_ARGS_ERR RESET, 2));
 	if (!env || !(*env))
 		return (ft_putstr_fd(RED ENV_ERR RESET, 2));
@@ -75,6 +98,11 @@ int	main(int argc, char **argv, char **env)
 	pipex.path = path_exist(env);
 	if (!pipex.path || !(*pipex.path))
 		return (ft_putstr_fd(RED ENV_ERR RESET, 2));
+	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	{
+		pipex.cmdc = argc - 4;
+		heredoc(&pipex, argv[2], argv[argc - 1], argv + 3);
+	}
 	pipex.cmdc = argc - 3;
 	prepare(&pipex, argv[1], argv[argc - 1], argv + 2);
 	precess(&pipex);

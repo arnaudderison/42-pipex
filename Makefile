@@ -6,7 +6,7 @@
 #    By: aderison <aderison@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/09 16:01:42 by aderison          #+#    #+#              #
-#    Updated: 2024/05/11 01:28:47 by aderison         ###   ########.fr        #
+#    Updated: 2024/05/12 13:28:04 by aderison         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,21 +48,32 @@ ft_lstdelone_bonus.c ft_lstlast_bonus.c ft_lstnew_bonus.c)
 #Libft process
 LIBFT_PROC = $(addprefix process/, ft_close_pipes.c ft_create_pipes.c)
 
+#Libft GNL
+LIBFT_GNL = $(addprefix gnl/, get_next_line.c)
+
 #Libft ft_printf
 LIBFT_PRINTF = ft_printf/ft_printf.c
 
 # Libft sources
 LIBFT_SRCS = $(addprefix lib/libft/src/, $(LIBFT_STRING) $(LIBFT_NUM) $(LIBFT_MEM) \
-$(LIBFT_LST) $(LIBFT_PRINTF) $(LIBFT_PROC))
+$(LIBFT_LST) $(LIBFT_PRINTF) $(LIBFT_PROC) $(LIBFT_GNL))
 LIBFT_OBJS = $(LIBFT_SRCS:%c=obj/%o)
 
 #pipex srcs
 PIPEX_PATH = $(addprefix path/, path_exist.c)
-PIPEX_STRUCT = $(addprefix struct/, init_struct.c)
+PIPEX_STRUCT = $(addprefix struct/, prepare.c)
 PIPEX_FAIL = $(addprefix fail/, exit.c)
 PIPEX_UTILS = $(addprefix utils/, $(PIPEX_PATH) $(PIPEX_STRUCT) $(PIPEX_FAIL))
 PIPEX_SRCS = $(addprefix src/, main.c $(PIPEX_UTILS))
 PIPEX_OBJS = $(PIPEX_SRCS:%c=obj/%o)
+
+#pipex BONUS
+PIPEXB_PATH = $(addprefix path/, path_exist.c)
+PIPEXB_STRUCT = $(addprefix struct/, prepare.c)
+PIPEXB_FAIL = $(addprefix fail/, exit.c)
+PIPEXB_UTILS = $(addprefix utils/, $(PIPEX_PATH) $(PIPEX_STRUCT) $(PIPEX_FAIL))
+PIPEXB_SRCS = $(addprefix src_bonus/, main.c $(PIPEX_UTILS))
+PIPEXB_OBJS = $(PIPEXB_SRCS:%c=obj/%o)
 
 # Compilation rules
 all: $(LIBFT) $(NAME)
@@ -72,7 +83,12 @@ $(LIBFT): $(LIBFT_OBJS)
 	@echo "\n${YELLOW}Library $(LIBFT) created.${NC}"
 
 $(NAME): $(PIPEX_OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $^ -o $@
+	@$(CC) $(CFLAGS) $^ -o pipex
+	@echo "\n${YELLOW}Executable $(NAME) created.${NC}"
+
+bonus: $(PIPEXB_OBJS) $(LIBFT)
+	@echo BONUS
+	@$(CC) $(CFLAGS) $^ -o pipex
 	@echo "\n${YELLOW}Executable $(NAME) created.${NC}"
 
 obj/%.o: %.c

@@ -6,7 +6,7 @@
 /*   By: aderison <aderison@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 20:18:01 by aderison          #+#    #+#             */
-/*   Updated: 2024/05/10 20:21:22 by aderison         ###   ########.fr       */
+/*   Updated: 2024/05/11 23:20:48 by aderison         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	ft_create_pipes(int fds[], int count)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < count - 1)

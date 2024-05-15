@@ -6,7 +6,7 @@
 /*   By: aderison <aderison@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 19:06:55 by aderison          #+#    #+#             */
-/*   Updated: 2024/05/11 01:29:12 by aderison         ###   ########.fr       */
+/*   Updated: 2024/05/12 14:28:25 by aderison         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,17 @@ typedef struct s_pipex
 	int		fd_output;
 }			t_pipex;
 
+# define NAME "pipex :"
+# define HEREDOC_FILE "tmp.hearedoc"
 # define NB_ARGS_ERR "Number(s) of args is invalide\n"
-# define ENV_ERR \
-	"Invalid ENV\n [+] Check if the PATH environment variable is \
-available by typing env in your terminal"
-# define ERR_POINTER_NULL "POINTER NULL ERROR : \n"
+# define ENV_ERR "Invalid ENV. Check if the PATH environment\n"
+# define ERR_POINTER_NULL "POINTER NULL ERROR\n"
+# define SUCCESS_MESSAGE \
+	"Pipex Terminé avec succès. \
+\nBy Arnaud Derison (aderison)"
 
 char		**path_exist(char **env);
-int			init_struct(t_pipex *pipex, char *input, char *output, char **cmds,
-				int argc);
+int			prepare(t_pipex *pipex, char *input, char *output, char **cmds);
 void		exit_pipex(t_pipex *pipex, char *msg, int error);
 
 #endif

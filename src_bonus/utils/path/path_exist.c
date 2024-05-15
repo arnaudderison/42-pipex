@@ -1,25 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_close_pipes.c                                   :+:      :+:    :+:   */
+/*   path_exist.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aderison <aderison@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/10 20:14:02 by aderison          #+#    #+#             */
-/*   Updated: 2024/05/11 23:19:44 by aderison         ###   ########.fr       */
+/*   Created: 2024/05/09 19:27:56 by aderison          #+#    #+#             */
+/*   Updated: 2024/05/10 11:33:47 by aderison         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/libft.h"
+#include "pipex.h"
 
-void	ft_close_pipes(int *fds, int count)
+char	**path_exist(char **env)
 {
-	int	i;
-
-	i = 0;
-	while (i < 2 * (count - 1))
+	if (!*env)
+		return (NULL);
+	while (!ft_strnstr(*env, "PATH", 4))
 	{
-		close(fds[i]);
-		i++;
+		if (*env == NULL)
+			return (NULL);
+		env++;
 	}
+	return (ft_split(*env + 5, ':'));
 }

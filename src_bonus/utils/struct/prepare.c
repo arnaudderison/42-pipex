@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_struct.c                                      :+:      :+:    :+:   */
+/*   prepare.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aderison <aderison@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/10 11:44:34 by aderison          #+#    #+#             */
-/*   Updated: 2024/05/11 22:32:36 by aderison         ###   ########.fr       */
+/*   Updated: 2024/05/12 14:52:31 by aderison         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,34 +36,38 @@ static char	*create_cmd(t_pipex pipex, char *cmd)
 			return (ft_free(1, &tmp), path);
 		ft_free(2, &tmp, &path);
 	}
-	ft_printf(MAG "pipex:" RESET "command not found: %s\n", cmd);
+	ft_printf(MAG NAME RESET " command not found: %s\n", cmd);
 	return (NULL);
 }
-static void file(t_pipex *pipex, char *input, char *output)
+
+static void	file(t_pipex *pipex, char *input, char *output, int append)
 {
 	pipex->fd_input = open(input, O_RDONLY);
 	if (pipex->fd_input < 0)
-		ft_printf(MAG "pipex:" RESET " %s: %s\n", strerror(errno), input);
-	pipex->fd_output = open(output, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		ft_printf(MAG NAME RESET " %s: %s\n", strerror(errno), input);
+	if (append)
+		pipex->fd_output = open(output, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else
+		pipex->fd_output = open(output, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (pipex->fd_output < 0)
-		ft_printf(MAG "pipex:" RESET " %s: %s\n", strerror(errno), output);
-	if(pipex->fd_input < 0 || pipex->fd_output < 0)
+		ft_printf(MAG NAME RESET " %s: %s\n", strerror(errno), output);
+	if (pipex->fd_input < 0 || pipex->fd_output < 0)
 		exit_pipex(pipex, NULL, EXIT_SUCCESS);
 }
 
-int	init_struct(t_pipex *pipex, char *input, char *output, char **cmds,
-		int argc)
+int	prepare(t_pipex *pipex, char *input, char *output, char **cmds)
 {
 	int	i;
 
 	if (!pipex || !input || !output || !cmds || !*cmds)
-		return (ft_putstr_fd(RED ERR_POINTER_NULL "[+] A NULL pointer detected during init" RESET,
-				2));
-	pipex->cmdc = argc - 3;
-	file(pipex, input, output);
+		exit_pipex(pipex, RED ERR_POINTER_NULL RESET, EXIT_FAILURE);
+	if (ft_strncmp(input, HEREDOC_FILE, ft_strlen(HEREDOC_FILE)) == 0)
+		file(pipex, input, output, 1);
+	else
+		file(pipex, input, output, 0);
 	pipex->cmds = malloc(sizeof(char **) * pipex->cmdc);
 	if (!pipex->cmds)
-		exit(EXIT_FAILURE);
+		exit_pipex(pipex, RED ERR_POINTER_NULL RESET, EXIT_FAILURE);
 	i = -1;
 	while (++i < pipex->cmdc)
 		pipex->cmds[i] = ft_split(cmds[i], ' ');
